@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/nil_arm_api.iml" filepath="$PROJECT_DIR$/nil_arm_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flight_api.iml" filepath="$PROJECT_DIR$/flight_api.iml" />
     </modules>
   </component>
 </project>

@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="flight_api:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/flight_api_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="flight_api" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="application" name="spring" />
+          <element id="library" level="project" name="lib" />
+          <element id="library" level="project" name="spring-security-kerberos-core-1.0.1.RELEASE" />
+          <element id="library" level="project" name="kerberos" />
+          <element id="library" level="project" name="jasper" />
+          <element id="library" level="project" name="poi-bin-5.2" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="flight_api/web/Web" />
+    </root>
+  </artifact>
+</component>
