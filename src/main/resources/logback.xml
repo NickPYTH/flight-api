@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <configuration debug="false" scan="false" scanPeriod="30 seconds">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <property name="LOG_DIR" value="C:/temp"/>
+<!--    <property name="LOG_DIR" value="/var/log/tomcat/app/nil_arm"/>-->
+
+    <appender name="AUTH" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_DIR}/app0.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} APP0 - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_DIR}/flight.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} APP0 - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--    OFF << FATAL << ERROR << WARN << INFO << DEBUG << TRACE << ALL   -->
+
+    <logger name="root" level="INFO">
+        <appender-ref ref="FILE" />
+    </logger>
+
+    <logger name="org.springframework.security.kerberos.authentication.KerberosServiceAuthenticationProvider" level="INFO">
+        <appender-ref ref="AUTH" />
+    </logger>
+</configuration>
