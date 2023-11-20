@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class EmployeeResponsibleDTO {
+
     private Long id;
     private Long idEmployee;
     private String phoneNumber;
-
+    private String FIO;
 }

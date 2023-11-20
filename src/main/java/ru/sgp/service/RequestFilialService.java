@@ -25,7 +25,7 @@ public class RequestFilialService {
     @Autowired
     FlightFilialRepository flightFilialRepository;
     @Autowired
-    AirWorkTypeRepository workTypeRepository;
+    WorkTypeRepository workTypeRepository;
     @Autowired
     EmployeeResponsibleRepository employeeResponsibleRepository;
     @Autowired
@@ -60,6 +60,7 @@ public class RequestFilialService {
                     pair.put("cargoWeightMount", flight.getCargoWeightMount().toString());
                     pair.put("cargoWeightIn", flight.getCargoWeightIn().toString());
                     pair.put("cargoWeightOut", flight.getCargoWeightOut().toString());
+                    pair.put("routeId", flight.getIdRoute().getId().toString());
                     pair.put("id", flight.getId().toString());
                     routesDTO.add(pair);
                 }

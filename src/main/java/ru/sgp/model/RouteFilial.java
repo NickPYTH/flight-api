@@ -24,6 +24,6 @@ public class RouteFilial {
 
     @OneToOne
     @JoinColumn(name = "id_work_type")
-    private AirWorkType idWorkType;
+    private WorkType idWorkType;
 
 }

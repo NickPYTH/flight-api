@@ -3,7 +3,9 @@ package ru.sgp.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.sgp.dto.EmployeeDTO;
 import ru.sgp.dto.FlightFilialDTO;
+import ru.sgp.model.Employee;
 import ru.sgp.service.FlightFilialService;
 
 import java.util.List;
@@ -23,5 +25,10 @@ public class FlightFilialController {
     @GetMapping(path = "/getAll")
     public ResponseEntity<List<FlightFilialDTO>> getAll() {
         return flightFilialService.getAll();
+    }
+
+    @PatchMapping(path = "/update")
+    public ResponseEntity<FlightFilialDTO> update(@RequestBody FlightFilialDTO flightFilialDTO) {
+        return flightFilialService.update(flightFilialDTO);
     }
 }

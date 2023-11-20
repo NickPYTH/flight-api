@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.sgp.dto.FilialDTO;
 import ru.sgp.dto.FlightFilialDTO;
 import ru.sgp.model.FlightFilial;
 import ru.sgp.repository.FlightFilialRepository;
@@ -33,5 +32,17 @@ public class FlightFilialService {
         List<FlightFilialDTO> response = new ArrayList<>();
         flightFilialRepository.findAll().forEach(filial -> response.add(mapper.map(filial, FlightFilialDTO.class)));
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public ResponseEntity<FlightFilialDTO> update(FlightFilialDTO flightFilialDTO) {
+        ModelMapper mapper = new ModelMapper();
+        Optional<FlightFilial> flightFilialOptional = flightFilialRepository.findById(flightFilialDTO.getId());
+        FlightFilialDTO response = new FlightFilialDTO();
+        if (flightFilialOptional.isPresent()) {
+            FlightFilial flightFilial = mapper.map(flightFilialDTO, FlightFilial.class);
+            flightFilialRepository.save(flightFilial);
+            return new ResponseEntity<>(flightFilialDTO, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Table(name = "dict_air_work_type", schema = "public")
-public class AirWorkType {
+public class WorkType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
