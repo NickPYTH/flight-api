@@ -47,7 +47,7 @@ public class RequestFilialService {
             List<RouteFilial> routes = routeFilialRepository.findAllByIdRequest(request);
             List<HashMap<String, String>> routesDTO = new ArrayList<>();
             for (RouteFilial route: routes){
-                List<FlightFilial> flights = flightFilialRepository.findAllByIdRoute(route);
+                List<FlightFilial> flights = flightFilialRepository.findAllByIdRouteOrderById(route);
                 for(FlightFilial flight: flights){
                     HashMap<String, String> pair = new HashMap<>();
                     pair.put("workType", workTypeRepository.getById(route.getIdWorkType().getId()).getName());

@@ -12,4 +12,6 @@ import java.util.List;
 public interface FlightFilialRepository extends JpaRepository<FlightFilial, Long> {
 
     List<FlightFilial> findAllByIdRoute(RouteFilial route);
+
+    List<FlightFilial> findAllByIdRouteOrderById(RouteFilial route);
 }

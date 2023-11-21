@@ -6,6 +6,8 @@ import lombok.Data;
 public class FlightFilialDTO {
     private Long id;
     private Long idRoute;
+    private Long idWorkType;
+    private String FIO;
     private String flyDate;
     private Long idAirportArrival;
     private Long idAirportDeparture;
