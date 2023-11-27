@@ -31,4 +31,9 @@ public class FlightFilialController {
     public ResponseEntity<FlightFilialDTO> update(@RequestBody FlightFilialDTO flightFilialDTO) {
         return flightFilialService.update(flightFilialDTO);
     }
+
+    @PostMapping(path = "/create")
+    public ResponseEntity<FlightFilialDTO> create(@RequestBody FlightFilialDTO flightFilialDTO) {
+        return flightFilialService.create(flightFilialDTO);
+    }
 }

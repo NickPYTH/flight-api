@@ -30,6 +30,7 @@ public class RequestFilialService {
     EmployeeResponsibleRepository employeeResponsibleRepository;
     @Autowired
     EmployeeRepository employeeRepository;
+
     @Transactional
     public ResponseEntity<RequestFilialDTO> get(Long id) {
         ModelMapper mapper = new ModelMapper();
@@ -46,20 +47,20 @@ public class RequestFilialService {
             RequestFilialDTO response = new RequestFilialDTO();
             List<RouteFilial> routes = routeFilialRepository.findAllByIdRequest(request);
             List<HashMap<String, String>> routesDTO = new ArrayList<>();
-            for (RouteFilial route: routes){
+            for (RouteFilial route : routes) {
                 List<FlightFilial> flights = flightFilialRepository.findAllByIdRouteOrderById(route);
-                for(FlightFilial flight: flights){
+                for (FlightFilial flight : flights) {
                     HashMap<String, String> pair = new HashMap<>();
                     pair.put("workType", workTypeRepository.getById(route.getIdWorkType().getId()).getName());
                     Employee employee = employeeResponsibleRepository.getById(route.getIdEmpResp().getId()).getIdEmployee();
-                    pair.put("employee", employee.getSecondname() + ' ' + employee.getFirstName() + ' ' + employee.getLastname());
+                    pair.put("employee", employee.getLastname() + ' ' + employee.getFirstName() + ' ' + employee.getSecondname());
                     pair.put("dateTime", flight.getFlyDate().toString());
                     pair.put("airportDeparture", flight.getIdAirportDeparture().getName());
                     pair.put("airportArrival", flight.getIdAirportArrival().getName());
-                    pair.put("passengerCount", flight.getPassengerCount().toString());
-                    pair.put("cargoWeightMount", flight.getCargoWeightMount().toString());
-                    pair.put("cargoWeightIn", flight.getCargoWeightIn().toString());
-                    pair.put("cargoWeightOut", flight.getCargoWeightOut().toString());
+                    pair.put("passengerCount", flight.getPassengerCount() == null ? "" : flight.getPassengerCount().toString());
+                    pair.put("cargoWeightMount", flight.getCargoWeightMount() == null ? "" : flight.getCargoWeightMount().toString());
+                    pair.put("cargoWeightIn", flight.getCargoWeightIn() == null ? "" : flight.getCargoWeightIn().toString());
+                    pair.put("cargoWeightOut", flight.getCargoWeightOut() == null ? "" : flight.getCargoWeightOut().toString());
                     pair.put("routeId", flight.getIdRoute().getId().toString());
                     pair.put("id", flight.getId().toString());
                     routesDTO.add(pair);
