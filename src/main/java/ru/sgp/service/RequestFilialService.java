@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.sgp.dto.RequestFilialDTO;
+import ru.sgp.dto.RequestStateDTO;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
@@ -30,6 +31,8 @@ public class RequestFilialService {
     EmployeeResponsibleRepository employeeResponsibleRepository;
     @Autowired
     EmployeeRepository employeeRepository;
+    @Autowired
+    RequestStateRepository requestStateRepository;
 
     @Transactional
     public ResponseEntity<RequestFilialDTO> get(Long id) {
@@ -88,4 +91,48 @@ public class RequestFilialService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity<RequestStateDTO> sendOnConfirm(Long flightRequestId) {
+        ModelMapper mapper = new ModelMapper();
+        Optional<RequestFilial> requestFilialOptional = requestFilialRepository.findById(flightRequestId);
+        if (requestFilialOptional.isPresent()) {
+            RequestFilial requestFilial = requestFilialOptional.get();
+            RequestState state = requestStateRepository.getById(2L); // On confirm id state
+            requestFilial.setIdState(state);
+            requestFilialRepository.save(requestFilial);
+            RequestStateDTO response = mapper.map(state, RequestStateDTO.class);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @Transactional
+    public ResponseEntity<RequestStateDTO> confirm(Long flightRequestId) {
+        ModelMapper mapper = new ModelMapper();
+        Optional<RequestFilial> requestFilialOptional = requestFilialRepository.findById(flightRequestId);
+        if (requestFilialOptional.isPresent()) {
+            RequestFilial requestFilial = requestFilialOptional.get();
+            RequestState state = requestStateRepository.getById(3L); // Confirm id state
+            requestFilial.setIdState(state);
+            requestFilialRepository.save(requestFilial);
+            RequestStateDTO response = mapper.map(state, RequestStateDTO.class);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @Transactional
+    public ResponseEntity<RequestStateDTO> decline(Long flightRequestId) {
+        ModelMapper mapper = new ModelMapper();
+        Optional<RequestFilial> requestFilialOptional = requestFilialRepository.findById(flightRequestId);
+        if (requestFilialOptional.isPresent()) {
+            RequestFilial requestFilial = requestFilialOptional.get();
+            RequestState state = requestStateRepository.getById(4L); // Decline id state
+            requestFilial.setIdState(state);
+            requestFilialRepository.save(requestFilial);
+            RequestStateDTO response = mapper.map(state, RequestStateDTO.class);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
 }
