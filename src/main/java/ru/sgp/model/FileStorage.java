@@ -11,8 +11,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "file_storage", schema = "public")
 public class FileStorage {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "file_name")
@@ -22,4 +23,12 @@ public class FileStorage {
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] fileBody;
+
+    @OneToOne
+    @JoinColumn(name = "id_request")
+    private Request idRequest;
+
+    @OneToOne
+    @JoinColumn(name = "id_request_filial")
+    private Request idRequestFilial;
 }

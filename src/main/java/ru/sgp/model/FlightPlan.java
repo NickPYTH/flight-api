@@ -17,7 +17,7 @@ public class FlightPlan {
 
     @OneToOne
     @JoinColumn(name = "id_route")
-    private RouteFilial idRoute;
+    private RoutePlan idRoute;
 
     @Column(name = "fly_date")
     private Date flyDate;

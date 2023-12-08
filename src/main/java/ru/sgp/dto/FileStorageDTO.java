@@ -8,6 +8,6 @@ public class FileStorageDTO {
     private Long id;
     private String fileName;
     private MultipartFile fileBody;
-
     private Long idRequestFilial;
+    private Long idRequest;
 }

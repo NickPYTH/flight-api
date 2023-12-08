@@ -17,14 +17,14 @@ public class Employee {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name="id_filial")
+    @JoinColumn(name = "id_filial")
     private Filial idFilial;
 
     @OneToOne
-    @JoinColumn(name="id_department")
+    @JoinColumn(name = "id_department")
     private Department idDepartment;
 
-    @Column( name = "tabnumber")
+    @Column(name = "tabnumber")
     private Integer tabnumber;
 
     @Column(name = "firstname")
@@ -44,4 +44,7 @@ public class Employee {
 
     @Column(name = "end_date")
     private Date endDate;
+
+    @Column(name = "login")
+    private String login;
 }

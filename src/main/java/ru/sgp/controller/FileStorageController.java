@@ -9,6 +9,8 @@ import ru.sgp.model.FileStorage;
 import ru.sgp.service.FileStorageService;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -22,9 +24,19 @@ public class FileStorageController {
         return fileStorageService.get(id);
     }
 
+    @GetMapping(path = "/getFilesByRequest")
+    public ResponseEntity<List<HashMap<String, String>>> getFilesByRequest(@RequestParam Long id) {
+        return fileStorageService.getFilesByRequest(id);
+    }
+
     @PostMapping(path = "/create")
     public ResponseEntity<FileStorage> create(@ModelAttribute FileStorageDTO fileStorageDTO) throws IOException {
         return fileStorageService.create(fileStorageDTO);
+    }
+
+    @PostMapping(path = "/addToRequest")
+    public ResponseEntity<Long> addToRequest(@ModelAttribute FileStorageDTO fileStorageDTO) throws IOException {
+        return fileStorageService.addToRequest(fileStorageDTO);
     }
 
     @DeleteMapping(path = "/delete")

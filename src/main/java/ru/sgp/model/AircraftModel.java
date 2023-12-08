@@ -17,7 +17,8 @@ public class AircraftModel {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "id_type")
-    private Integer idType;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type")
+    private AircraftType idType;
 
 }
