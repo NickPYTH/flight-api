@@ -34,4 +34,5 @@ public class RequestDTO {
     private String airlineName;
     private String docName;
     private List<HashMap<String, String>> routes;
+    private List<HashMap<String, String>> costs;
 }

@@ -43,6 +43,8 @@ public class RequestService {
     EmpCustomerRepository empCustomerRepository;
     @Autowired
     RequestHistoryRepository requestHistoryRepository;
+    @Autowired
+    RequestCostRepository requestCostRepository;
 
     @Transactional
     public ResponseEntity<List<RequestDTO>> getAllByYear(Integer year) {
@@ -73,11 +75,16 @@ public class RequestService {
         propertyMapper.addMappings(m -> m.map(src -> src.getContractData().getAircraftModel().getName(), RequestDTO::setAircraftModelName));
         propertyMapper.addMappings(m -> m.map(src -> src.getContractData().getContract().getAirline().getName(), RequestDTO::setAirlineName));
         propertyMapper.addMappings(m -> m.map(src -> src.getContractData().getContract().getDocNum(), RequestDTO::setDocName));
+        propertyMapper.addMappings(m -> m.map(Request::getDuration, RequestDTO::setDuration));
+        propertyMapper.addMappings(m -> m.map(Request::getDurationOut, RequestDTO::setDurationOut));
+        propertyMapper.addMappings(m -> m.map(Request::getCost, RequestDTO::setCost));
+        propertyMapper.addMappings(m -> m.map(Request::getCostOut, RequestDTO::setCostOut));
         Optional<Request> requestOptional = requestRepository.findById(id);
         if (requestOptional.isPresent()) {
             Request request = requestOptional.get();
             RequestDTO response = new RequestDTO();
             List<RoutePlan> routes = routePlanRepository.findAllByIdRequest(request);
+            List<HashMap<String, String>> costsDTO = new ArrayList<>();
             List<HashMap<String, String>> routesDTO = new ArrayList<>();
             for (RoutePlan route : routes) {
                 List<FlightPlan> flights = flightPlanRepository.findAllByIdRouteOrderById(route);
@@ -97,9 +104,16 @@ public class RequestService {
                     pair.put("id", flight.getId().toString());
                     routesDTO.add(pair);
                 }
+                List<RequestCost> costs = requestCostRepository.findAllByRequest(request);
+                for (RequestCost cost : costs) {
+                    HashMap<String, String> pair = new HashMap<>();
+                    //pair.put("id", ); // to do add costs to request
+                    costsDTO.add(pair);
+                }
             }
             response = mapper.map(request, RequestDTO.class);
             response.setRoutes(routesDTO);
+            response.setCosts(costsDTO);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -159,6 +173,41 @@ public class RequestService {
                 requestRepository.save(request);
                 requestHistory.setField("target");
                 requestHistory.setNewValue(empCustomer.getEmployee().getLastname() + " " + empCustomer.getEmployee().getFirstName() + " " + empCustomer.getEmployee().getSecondname());
+                requestHistoryRepository.save(requestHistory);
+            } else if (updateRequestDTO.getField().equals("flightDuration")) {
+                requestHistory.setOldValue(request.getDuration() == null ? "0" : String.valueOf(request.getDuration()));
+                request.setDuration(Double.valueOf(updateRequestDTO.getValue()));
+                requestRepository.save(request);
+                requestHistory.setField("flightDuration");
+                requestHistory.setNewValue(updateRequestDTO.getValue());
+                requestHistoryRepository.save(requestHistory);
+            } else if (updateRequestDTO.getField().equals("flightDurationOut")) {
+                requestHistory.setOldValue(request.getDurationOut() == null ? "0" : String.valueOf(request.getDurationOut()));
+                request.setDurationOut(Double.valueOf(updateRequestDTO.getValue()));
+                requestRepository.save(request);
+                requestHistory.setField("flightDuration");
+                requestHistory.setNewValue(updateRequestDTO.getValue());
+                requestHistoryRepository.save(requestHistory);
+            } else if (updateRequestDTO.getField().equals("cost")) {
+                requestHistory.setOldValue(request.getCost() == null ? "0" : String.valueOf(request.getCost()));
+                request.setCost(Double.valueOf(updateRequestDTO.getValue()));
+                requestRepository.save(request);
+                requestHistory.setField("cost");
+                requestHistory.setNewValue(updateRequestDTO.getValue());
+                requestHistoryRepository.save(requestHistory);
+            } else if (updateRequestDTO.getField().equals("costOut")) {
+                requestHistory.setOldValue(request.getCostOut() == null ? "0" : String.valueOf(request.getCostOut()));
+                request.setCostOut(Double.valueOf(updateRequestDTO.getValue()));
+                requestRepository.save(request);
+                requestHistory.setField("costOut");
+                requestHistory.setNewValue(updateRequestDTO.getValue());
+                requestHistoryRepository.save(requestHistory);
+            } else if (updateRequestDTO.getField().equals("roundDigit")) {
+                requestHistory.setOldValue(request.getRoundDigit() == null ? "0" : String.valueOf(request.getRoundDigit()));
+                request.setRoundDigit(Integer.valueOf(updateRequestDTO.getValue()));
+                requestRepository.save(request);
+                requestHistory.setField("roundDigit");
+                requestHistory.setNewValue(updateRequestDTO.getValue());
                 requestHistoryRepository.save(requestHistory);
             }
             return new ResponseEntity<>(updateRequestDTO, HttpStatus.OK);
