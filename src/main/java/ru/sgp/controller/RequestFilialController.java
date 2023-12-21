@@ -7,6 +7,7 @@ import ru.sgp.dto.RequestFilialDTO;
 import ru.sgp.dto.RequestStateDTO;
 import ru.sgp.service.RequestFilialService;
 
+import java.text.ParseException;
 import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -39,6 +40,11 @@ public class RequestFilialController {
     @PostMapping(path = "/decline")
     public ResponseEntity<RequestStateDTO> decline(@RequestParam Long flightRequestId) {
         return requestFilialService.decline(flightRequestId);
+    }
+
+    @PostMapping(path = "/create")
+    public ResponseEntity<RequestFilialDTO> create(@RequestBody RequestFilialDTO body) throws ParseException {
+        return requestFilialService.create(body);
     }
 
 }

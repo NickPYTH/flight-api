@@ -3,6 +3,7 @@ package ru.sgp.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.sgp.dto.CostDTO;
 import ru.sgp.dto.RequestDTO;
 import ru.sgp.dto.RequestHistoryDTO;
 import ru.sgp.dto.UpdateRequestDTO;
@@ -39,6 +40,21 @@ public class RequestController {
     @GetMapping(path = "/getHistory")
     public ResponseEntity<List<RequestHistoryDTO>> getHistory(@RequestParam Long id) {
         return requestHistoryService.getHistory(id);
+    }
+
+    @PostMapping(path = "/createCost")
+    public ResponseEntity<CostDTO> createCost(@RequestBody CostDTO costDTO) {
+        return requestService.createCost(costDTO);
+    }
+
+    @PostMapping(path = "/updateCost")
+    public ResponseEntity<CostDTO> updateCost(@RequestBody CostDTO costDTO) {
+        return requestService.updateCost(costDTO);
+    }
+
+    @GetMapping(path = "/getCosts")
+    public ResponseEntity<List<CostDTO>> getCostsByRequestId(@RequestParam Long id) {
+        return requestService.getCostsByRequestId(id);
     }
 
 }

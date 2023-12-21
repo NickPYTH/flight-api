@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.sgp.dto.CostDTO;
 import ru.sgp.dto.RequestDTO;
 import ru.sgp.dto.UpdateRequestDTO;
 import ru.sgp.model.*;
@@ -45,6 +46,12 @@ public class RequestService {
     RequestHistoryRepository requestHistoryRepository;
     @Autowired
     RequestCostRepository requestCostRepository;
+    @Autowired
+    FilialRepository filialRepository;
+    @Autowired
+    RouteFactRepository routeFactRepository;
+    @Autowired
+    FlightFactRepository flightFactRepository;
 
     @Transactional
     public ResponseEntity<List<RequestDTO>> getAllByYear(Integer year) {
@@ -83,10 +90,12 @@ public class RequestService {
         if (requestOptional.isPresent()) {
             Request request = requestOptional.get();
             RequestDTO response = new RequestDTO();
-            List<RoutePlan> routes = routePlanRepository.findAllByIdRequest(request);
+            List<RoutePlan> planRoutes = routePlanRepository.findAllByIdRequest(request);
+            List<RouteFact> factRoutes = routeFactRepository.findAllByIdRequest(request);
             List<HashMap<String, String>> costsDTO = new ArrayList<>();
             List<HashMap<String, String>> routesDTO = new ArrayList<>();
-            for (RoutePlan route : routes) {
+            List<HashMap<String, String>> planRoutesDTO = new ArrayList<>();
+            for (RoutePlan route : planRoutes) {
                 List<FlightPlan> flights = flightPlanRepository.findAllByIdRouteOrderById(route);
                 for (FlightPlan flight : flights) {
                     HashMap<String, String> pair = new HashMap<>();
@@ -107,12 +116,44 @@ public class RequestService {
                 List<RequestCost> costs = requestCostRepository.findAllByRequest(request);
                 for (RequestCost cost : costs) {
                     HashMap<String, String> pair = new HashMap<>();
-                    //pair.put("id", ); // to do add costs to request
+                    pair.put("id", cost.getId() != null ? cost.getId().toString() : "");
+                    pair.put("filial", cost.getFilial() != null ? cost.getFilial().getShortName() : "");
+                    pair.put("workType", cost.getWorkType() != null ? cost.getWorkType().getName() : "");
+                    pair.put("duration", cost.getDuration() != null ? cost.getDuration() : "");
+                    costsDTO.add(pair);
+                }
+            }
+            for (RouteFact route : factRoutes) {
+                List<FlightFact> flights = flightFactRepository.findAllByIdRouteOrderById(route);
+                for (FlightFact flight : flights) {
+                    HashMap<String, String> pair = new HashMap<>();
+                    pair.put("workType", workTypeRepository.getById(route.getIdWorkType().getId()).getName());
+                    Employee employee = employeeResponsibleRepository.getById(route.getIdEmpResp().getId()).getIdEmployee();
+                    pair.put("employee", employee.getLastname() + ' ' + employee.getFirstName() + ' ' + employee.getSecondname());
+                    pair.put("dateTime", flight.getFlyDate().toString());
+                    pair.put("airportDeparture", flight.getIdAirportDeparture().getName());
+                    pair.put("airportArrival", flight.getIdAirportArrival().getName());
+                    pair.put("passengerCount", flight.getPassengerCount() == null ? "" : flight.getPassengerCount().toString());
+                    pair.put("cargoWeightMount", flight.getCargoWeightMount() == null ? "" : flight.getCargoWeightMount().toString());
+                    pair.put("cargoWeightIn", flight.getCargoWeightIn() == null ? "" : flight.getCargoWeightIn().toString());
+                    pair.put("cargoWeightOut", flight.getCargoWeightOut() == null ? "" : flight.getCargoWeightOut().toString());
+                    pair.put("routeId", flight.getIdRoute().getId().toString());
+                    pair.put("id", flight.getId().toString());
+                    planRoutesDTO.add(pair);
+                }
+                List<RequestCost> costs = requestCostRepository.findAllByRequest(request);
+                for (RequestCost cost : costs) {
+                    HashMap<String, String> pair = new HashMap<>();
+                    pair.put("id", cost.getId() != null ? cost.getId().toString() : "");
+                    pair.put("filial", cost.getFilial() != null ? cost.getFilial().getShortName() : "");
+                    pair.put("workType", cost.getWorkType() != null ? cost.getWorkType().getName() : "");
+                    pair.put("duration", cost.getDuration() != null ? cost.getDuration() : "");
                     costsDTO.add(pair);
                 }
             }
             response = mapper.map(request, RequestDTO.class);
             response.setRoutes(routesDTO);
+            response.setFactRoutes(planRoutesDTO);
             response.setCosts(costsDTO);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else
@@ -213,5 +254,60 @@ public class RequestService {
             return new ResponseEntity<>(updateRequestDTO, HttpStatus.OK);
         } else
             return new ResponseEntity<>(updateRequestDTO, HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<CostDTO> createCost(CostDTO costDTO) {
+        Optional<Request> requestOpt = requestRepository.findById(costDTO.getRequestId());
+        Optional<Filial> filialOpt = filialRepository.findById(costDTO.getFilialId());
+        Optional<WorkType> workTypeOpt = workTypeRepository.findById(costDTO.getWorkTypeId());
+        if (requestOpt.isPresent() && filialOpt.isPresent() && workTypeOpt.isPresent()) {
+            RequestCost requestCost = new RequestCost();
+            requestCost.setRequest(requestOpt.get());
+            requestCost.setFilial(filialOpt.get());
+            requestCost.setWorkType(workTypeOpt.get());
+            requestCost.setDuration(costDTO.getDuration().toString());
+            requestCost.setDurationOut(costDTO.getCost().toString());
+            requestCostRepository.save(requestCost);
+            return new ResponseEntity<>(costDTO, HttpStatus.CREATED);
+        } else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<CostDTO> updateCost(CostDTO costDTO) {
+        Optional<Request> requestOpt = requestRepository.findById(costDTO.getRequestId());
+        Optional<Filial> filialOpt = filialRepository.findById(costDTO.getFilialId());
+        Optional<WorkType> workTypeOpt = workTypeRepository.findById(costDTO.getWorkTypeId());
+        Optional<RequestCost> requestCostOpt = requestCostRepository.findById(costDTO.getCostId());
+        if (requestOpt.isPresent() && filialOpt.isPresent() && workTypeOpt.isPresent() && requestCostOpt.isPresent()) {
+            RequestCost requestCost = requestCostOpt.get();
+            requestCost.setRequest(requestOpt.get());
+            requestCost.setFilial(filialOpt.get());
+            requestCost.setWorkType(workTypeOpt.get());
+            requestCost.setDuration(costDTO.getDuration().toString());
+            requestCost.setDurationOut(costDTO.getCost().toString());
+            requestCostRepository.save(requestCost);
+            return new ResponseEntity<>(costDTO, HttpStatus.CREATED);
+        } else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @Transactional
+    public ResponseEntity<List<CostDTO>> getCostsByRequestId(Long id) {
+        List<CostDTO> response = new ArrayList<>();
+        Optional<Request> requestOpt = requestRepository.findById(id);
+        if (requestOpt.isPresent()) {
+            for (RequestCost requestCost : requestCostRepository.findAllByRequest(requestOpt.get())) {
+                CostDTO costDTO = new CostDTO();
+                costDTO.setCostId(requestCost.getId());
+                costDTO.setRequestId(requestCost.getRequest().getId());
+                costDTO.setFilialName(requestCost.getFilial().getName());
+                costDTO.setFilialId(requestCost.getFilial().getId());
+                costDTO.setWorkTypeName(requestCost.getWorkType().getName());
+                costDTO.setWorkTypeId(requestCost.getWorkType().getId());
+                costDTO.setDuration(Double.valueOf(requestCost.getDuration()));
+                costDTO.setCost(Double.valueOf(requestCost.getDurationOut()));
+                response.add(costDTO);
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 }

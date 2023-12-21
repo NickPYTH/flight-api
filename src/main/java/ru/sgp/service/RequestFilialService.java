@@ -12,10 +12,10 @@ import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Year;
+import java.util.*;
 
 @Service
 public class RequestFilialService {
@@ -33,6 +33,10 @@ public class RequestFilialService {
     EmployeeRepository employeeRepository;
     @Autowired
     RequestStateRepository requestStateRepository;
+    @Autowired
+    FilialRepository filialRepository;
+    @Autowired
+    AirportRepository airportRepository;
 
     @Transactional
     public ResponseEntity<RequestFilialDTO> get(Long id) {
@@ -134,5 +138,48 @@ public class RequestFilialService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @Transactional
+    public ResponseEntity<RequestFilialDTO> create(RequestFilialDTO body) throws ParseException {
+        Optional<Filial> filialOpt = filialRepository.findById(body.getIdFilial());
+        RequestState state = requestStateRepository.getById(1L);
+        if (filialOpt.isPresent()) {
+            RequestFilial requestFilial = new RequestFilial();
+            requestFilial.setIdFilial(filialOpt.get());
+            requestFilial.setIdState(state);
+            requestFilial.setCreateDate(new Date());
+            requestFilial.setYear(Year.now().getValue());
+            requestFilialRepository.save(requestFilial);
+            for (HashMap<String, String> pair : body.getRoutes()) {
+                Airport airportArrival = airportRepository.getById(Long.valueOf(pair.get("airportArrivalId")));
+                Airport airportDeparture = airportRepository.getById(Long.valueOf(pair.get("airportDepartureId")));
+                EmployeeResponsible employeeResponsible = employeeResponsibleRepository.getById(Long.valueOf(pair.get("employeeId")));
+                WorkType workType = workTypeRepository.getById(Long.valueOf(pair.get("workTypeId")));
+                Optional<RouteFilial> routeFilialOpt = routeFilialRepository.findByIdRequestAndIdEmpRespAndIdWorkType(requestFilial, employeeResponsible, workType);
+                RouteFilial routeFilial = new RouteFilial();
+                if (routeFilialOpt.isEmpty()) {
+                    routeFilial.setIdRequest(requestFilial);
+                    routeFilial.setIdEmpResp(employeeResponsible);
+                    routeFilial.setIdWorkType(workType);
+                    routeFilialRepository.save(routeFilial);
+                } else routeFilial = routeFilialOpt.get();
+                FlightFilial flightFilial = new FlightFilial();
+                flightFilial.setIdRoute(routeFilial);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                java.sql.Date sqlDate = new java.sql.Date(formatter.parse(pair.get("dateTime")).getTime());
+                flightFilial.setFlyDate(sqlDate);
+                flightFilial.setIdAirportArrival(airportArrival);
+                flightFilial.setIdAirportDeparture(airportDeparture);
+                flightFilial.setPassengerCount(Integer.valueOf(pair.get("passengerCount")));
+                flightFilial.setCargoWeightIn(Float.valueOf(pair.get("cargoWeightIn")));
+                flightFilial.setCargoWeightOut(Float.valueOf(pair.get("cargoWeightOut")));
+                flightFilial.setCargoWeightMount(Float.valueOf(pair.get("cargoWeightMount")));
+                flightFilialRepository.save(flightFilial);
+            }
+            body.setId(requestFilial.getId());
+            return new ResponseEntity<>(body, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 }
