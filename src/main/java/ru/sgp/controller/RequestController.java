@@ -22,6 +22,11 @@ public class RequestController {
     @Autowired
     RequestHistoryService requestHistoryService;
 
+    @PostMapping(path = "/create")
+    public ResponseEntity<RequestDTO> create(@RequestBody RequestDTO body) throws ParseException {
+        return requestService.create(body);
+    }
+
     @GetMapping(path = "/getAllByYear")
     public ResponseEntity<List<RequestDTO>> getAllByYear(@RequestParam Integer year) {
         return requestService.getAllByYear(year);

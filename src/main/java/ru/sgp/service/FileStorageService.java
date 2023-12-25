@@ -64,6 +64,8 @@ public class FileStorageService {
         FileStorage fileStorage = new FileStorage();
         fileStorage.setName(fileStorageDTO.getFileName());
         fileStorage.setFileBody(fileStorageDTO.getFileBody().getBytes());
+        requestFilialRepository.save(requestFilial);
+        fileStorage.setIdRequestFilial(requestFilial.getIdRequestFile().getIdRequestFilial());
         fileStorageRepository.save(fileStorage);
         requestFilial.setIdRequestFile(fileStorage);
         requestFilialRepository.save(requestFilial);
@@ -94,18 +96,23 @@ public class FileStorageService {
     public ResponseEntity<FileStorage> delete(Long id) {
         Optional<FileStorage> fileStorageOptional = fileStorageRepository.findById(id);
         if (fileStorageOptional.isPresent()) {
-            Request request = requestRepository.getById(fileStorageOptional.get().getIdRequest().getId());
             fileStorageRepository.delete(fileStorageOptional.get());
-            Employee employee = employeeRepository.findByLogin(SecurityManager.getCurrentUser());
-            RequestHistory requestHistory = new RequestHistory();
-            requestHistory.setRequest(request);
-            Date date = new Date();
-            requestHistory.setDate(date);
-            requestHistory.setAction("deleteFile");
-            requestHistory.setEmployee(employee);
-            requestHistory.setField("file");
-            requestHistory.setNewValue(fileStorageOptional.get().getName());
-            requestHistoryRepository.save(requestHistory);
+            if (fileStorageOptional.get().getIdRequest() != null) {
+                Optional<Request> requestOpt = requestRepository.findById(fileStorageOptional.get().getIdRequest().getId());
+                if (requestOpt.isPresent()) {
+                    Employee employee = employeeRepository.findByLogin(SecurityManager.getCurrentUser());
+                    Request request = requestOpt.get();
+                    RequestHistory requestHistory = new RequestHistory();
+                    requestHistory.setRequest(request);
+                    Date date = new Date();
+                    requestHistory.setDate(date);
+                    requestHistory.setAction("deleteFile");
+                    requestHistory.setEmployee(employee);
+                    requestHistory.setField("file");
+                    requestHistory.setNewValue(fileStorageOptional.get().getName());
+                    requestHistoryRepository.save(requestHistory);
+                }
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

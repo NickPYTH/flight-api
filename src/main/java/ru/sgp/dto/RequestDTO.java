@@ -1,15 +1,12 @@
 package ru.sgp.dto;
 
 import lombok.Data;
-import ru.sgp.model.EmpCustomer;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 @Data
 public class RequestDTO {
-
     private Long id;
     private Integer year;
     private Integer docNum;
@@ -17,7 +14,9 @@ public class RequestDTO {
     private String flyDateStart;
     private String flyDateFinish;
     private String aircraftTypeName;
+    private Long aircraftTypeId;
     private String flightTargetName;
+    private Long flightTargetId;
     private String stateName;
     private Double duration;
     private Double durationOut;
@@ -27,10 +26,13 @@ public class RequestDTO {
     private String empCustomerName;
     private String empCustomerSecondName;
     private String empCustomerLastName;
+    private Long empCustomerId;
     private Integer docCode;
     private String rejectNote;
     private String note;
     private String aircraftModelName;
+    private Long aircraftModelId;
+    private Long contractDataId;
     private String airlineName;
     private String docName;
     private List<HashMap<String, String>> routes;

@@ -52,6 +52,12 @@ public class RequestService {
     RouteFactRepository routeFactRepository;
     @Autowired
     FlightFactRepository flightFactRepository;
+    @Autowired
+    AirportRepository airportRepository;
+    @Autowired
+    AircraftTypeRepository aircraftTypeRepository;
+    @Autowired
+    EmployeeCustomerRepository employeeCustomerRepository;
 
     @Transactional
     public ResponseEntity<List<RequestDTO>> getAllByYear(Integer year) {
@@ -309,5 +315,54 @@ public class RequestService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @Transactional
+    public ResponseEntity<RequestDTO> create(RequestDTO body) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        RequestState state = requestStateRepository.getById(1L);
+        Request request = new Request();
+        java.sql.Date startDate = new java.sql.Date(formatter.parse(body.getFlyDateStart()).getTime());
+        java.sql.Date finishDate = new java.sql.Date(formatter.parse(body.getFlyDateStart()).getTime());
+        AircraftModel aircraftModel = aircraftModelRepository.getById(body.getAircraftModelId());
+        ContractData contractData = contractDataRepository.getById(body.getContractDataId());
+        FlightTarget flightTarget = flightTargetRepository.getById(body.getFlightTargetId());
+        EmpCustomer employeeCustomer = employeeCustomerRepository.getById(body.getEmpCustomerId());
+        request.setYear(2023);
+        request.setFlyDateStart(startDate);
+        request.setFlyDateFinish(finishDate);
+        request.setAircraftType(aircraftModel.getIdType());
+        request.setContractData(contractData);
+        request.setFlightTarget(flightTarget);
+        request.setEmpCustomer(employeeCustomer);
+        request.setState(state);
+        requestRepository.save(request);
+        for (HashMap<String, String> pair : body.getRoutes()) {
+            Airport airportArrival = airportRepository.getById(Long.valueOf(pair.get("airportArrivalId")));
+            Airport airportDeparture = airportRepository.getById(Long.valueOf(pair.get("airportDepartureId")));
+            EmployeeResponsible employeeResponsible = employeeResponsibleRepository.getById(Long.valueOf(pair.get("employeeId")));
+            WorkType workType = workTypeRepository.getById(Long.valueOf(pair.get("workTypeId")));
+            Optional<RoutePlan> routePlanOpt = routePlanRepository.findByIdRequestAndIdEmpRespAndIdWorkType(request, employeeResponsible, workType);
+            RoutePlan routePlan = new RoutePlan();
+            if (routePlanOpt.isEmpty()) {
+                routePlan.setIdRequest(request);
+                routePlan.setIdEmpResp(employeeResponsible);
+                routePlan.setIdWorkType(workType);
+                routePlanRepository.save(routePlan);
+            } else routePlan = routePlanOpt.get();
+            FlightPlan flightPlan = new FlightPlan();
+            flightPlan.setIdRoute(routePlan);
+            java.sql.Date sqlDate = new java.sql.Date(formatter.parse(pair.get("dateTime")).getTime());
+            flightPlan.setFlyDate(sqlDate);
+            flightPlan.setIdAirportArrival(airportArrival);
+            flightPlan.setIdAirportDeparture(airportDeparture);
+            flightPlan.setPassengerCount(Integer.valueOf(pair.get("passengerCount")));
+            flightPlan.setCargoWeightIn(Float.valueOf(pair.get("cargoWeightIn")));
+            flightPlan.setCargoWeightOut(Float.valueOf(pair.get("cargoWeightOut")));
+            flightPlan.setCargoWeightMount(Float.valueOf(pair.get("cargoWeightMount")));
+            flightPlanRepository.save(flightPlan);
+        }
+        body.setId(request.getId());
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 }
