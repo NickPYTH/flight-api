@@ -65,7 +65,10 @@ public class FileStorageService {
         fileStorage.setName(fileStorageDTO.getFileName());
         fileStorage.setFileBody(fileStorageDTO.getFileBody().getBytes());
         requestFilialRepository.save(requestFilial);
-        fileStorage.setIdRequestFilial(requestFilial.getIdRequestFile().getIdRequestFilial());
+        try {
+            fileStorage.setIdRequestFilial(requestFilial.getIdRequestFile().getIdRequestFilial());
+        }
+        catch (Exception e){}
         fileStorageRepository.save(fileStorage);
         requestFilial.setIdRequestFile(fileStorage);
         requestFilialRepository.save(requestFilial);

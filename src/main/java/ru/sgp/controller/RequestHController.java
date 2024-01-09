@@ -21,7 +21,7 @@ public class RequestHController {
     }
 
     @GetMapping(path = "/get")
-    public ResponseEntity<RequestHDTO> getAllByYear(@RequestParam Long id) {
+    public ResponseEntity<RequestHDTO> get(@RequestParam Long id) {
         return requestHService.get(id);
     }
 

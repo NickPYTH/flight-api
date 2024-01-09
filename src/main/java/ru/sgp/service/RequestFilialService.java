@@ -166,9 +166,9 @@ public class RequestFilialService {
                 } else routeFilial = routeFilialOpt.get();
                 FlightFilial flightFilial = new FlightFilial();
                 flightFilial.setIdRoute(routeFilial);
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                java.sql.Date sqlDate = new java.sql.Date(formatter.parse(pair.get("dateTime")).getTime());
-                flightFilial.setFlyDate(sqlDate);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                //java.sql.Date sqlDate = new java.sql.Date(formatter.parse().getTime());
+                flightFilial.setFlyDate(formatter.parse(pair.get("dateTime")));
                 flightFilial.setIdAirportArrival(airportArrival);
                 flightFilial.setIdAirportDeparture(airportDeparture);
                 flightFilial.setPassengerCount(Integer.valueOf(pair.get("passengerCount")));

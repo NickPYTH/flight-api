@@ -7,11 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.sgp.dto.RequestHDTO;
+import ru.sgp.model.Employee;
+import ru.sgp.model.FlightPlanHelicopter;
 import ru.sgp.model.RequestH;
+import ru.sgp.model.RoutePlanHelicopter;
 import ru.sgp.repository.*;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -56,6 +60,10 @@ public class RequestHService {
     EmployeeCustomerRepository employeeCustomerRepository;
     @Autowired
     RequestHRepository requestHRepository;
+    @Autowired
+    RoutePlanHelicopterRepository routePlanHelicopterRepository;
+    @Autowired
+    FlightPlanHelicopterRepository flightPlanHelicopterRepository;
 
     @Transactional
     public ResponseEntity<List<RequestHDTO>> getAllByYear(Integer year) {
@@ -87,6 +95,29 @@ public class RequestHService {
         RequestH requestH = requestHRepository.getById(id);
         RequestHDTO response = mapper.map(requestH, RequestHDTO.class);
         response.setNameState("Создано");
+        List<HashMap<String, String>> routesDTO = new ArrayList<>();
+        List<RoutePlanHelicopter> planRoutes = routePlanHelicopterRepository.findAllByIdRequestH(requestH);
+        for (RoutePlanHelicopter route : planRoutes) {
+            List<FlightPlanHelicopter> flights = flightPlanHelicopterRepository.findAllByIdRouteHelicopterOrderById(route);
+            for (FlightPlanHelicopter flight : flights) {
+                HashMap<String, String> pair = new HashMap<>();
+                pair.put("workType", workTypeRepository.getById(route.getIdWorkType().getId()).getName());
+                Employee employee = employeeResponsibleRepository.getById(route.getIdEmpResp().getId()).getIdEmployee();
+                pair.put("employee", employee.getLastname() + ' ' + employee.getFirstName() + ' ' + employee.getSecondname());
+                pair.put("dateTime", flight.getFlyDate().toString());
+                pair.put("airportDeparture", flight.getIdAirportDeparture().getName());
+                pair.put("airportArrival", flight.getIdAirportArrival().getName());
+                pair.put("passengerCount", flight.getPassengerCount() == null ? "" : flight.getPassengerCount().toString());
+                pair.put("cargoWeightMount", flight.getCargoWeightMount() == null ? "" : flight.getCargoWeightMount().toString());
+                pair.put("cargoWeightIn", flight.getCargoWeightIn() == null ? "" : flight.getCargoWeightIn().toString());
+                pair.put("cargoWeightOut", flight.getCargoWeightOut() == null ? "" : flight.getCargoWeightOut().toString());
+                pair.put("routeId", flight.getIdRouteHelicopter().getId().toString());
+                pair.put("id", flight.getId().toString());
+                routesDTO.add(pair);
+            }
+        }
+        response.setRoutes(routesDTO);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

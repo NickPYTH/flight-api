@@ -11,6 +11,8 @@ import ru.sgp.repository.*;
 import ru.sgp.utils.SecurityManager;
 
 import javax.transaction.Transactional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -79,13 +81,15 @@ public class FlightPlanService {
     }
 
     @Transactional
-    public ResponseEntity<FlightPlanDTO> create(FlightPlanDTO flightPlanDTO) {
+    public ResponseEntity<FlightPlanDTO> create(FlightPlanDTO flightPlanDTO) throws ParseException {
         Request request = requestRepository.getById(flightPlanDTO.getIdRequest());
         List<RoutePlan> routes = routePlanRepository.findAllByIdRequest(request);
         ModelMapper mapper = new ModelMapper();
         FlightPlan flightPlan = new FlightPlan();
         FlightPlanDTO response = new FlightPlanDTO();
         flightPlan = mapper.map(flightPlanDTO, FlightPlan.class);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        flightPlan.setFlyDate(formatter.parse(flightPlanDTO.getFlyDate()));
         flightPlanRepository.save(flightPlan);
         WorkType workType = workTypeRepository.getById(flightPlanDTO.getIdWorkType());
         EmployeeResponsible employeeResponsible = employeeResponsibleRepository.getById(flightPlanDTO.getIdEmpResp());

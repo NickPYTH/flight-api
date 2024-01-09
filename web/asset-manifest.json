@@ -1,34 +1,21 @@
 {
   "files": {
-    "main.css": "/nil_arm/static/css/main.d9b97707.chunk.css",
-    "main.js": "/nil_arm/static/js/main.d42dd313.chunk.js",
-    "main.js.map": "/nil_arm/static/js/main.d42dd313.chunk.js.map",
-    "runtime-main.js": "/nil_arm/static/js/runtime-main.a577f45f.js",
-    "runtime-main.js.map": "/nil_arm/static/js/runtime-main.a577f45f.js.map",
-    "nil_arm/static/js/2.00a59def.chunk.js": "/nil_arm/static/js/2.00a59def.chunk.js",
-    "nil_arm/static/js/2.00a59def.chunk.js.map": "/nil_arm/static/js/2.00a59def.chunk.js.map",
+    "main.js": "/flight/static/js/main.091dfc46.chunk.js",
+    "main.js.map": "/flight/static/js/main.091dfc46.chunk.js.map",
+    "runtime-main.js": "/flight/static/js/runtime-main.1c5c934c.js",
+    "runtime-main.js.map": "/flight/static/js/runtime-main.1c5c934c.js.map",
+    "static/css/2.9dc46549.chunk.css": "/flight/static/css/2.9dc46549.chunk.css",
+    "static/js/2.43792a04.chunk.js": "/flight/static/js/2.43792a04.chunk.js",
+    "static/js/2.43792a04.chunk.js.map": "/flight/static/js/2.43792a04.chunk.js.map",
     "index.html": "/index.html",
-    "nil_arm/static/css/main.d9b97707.chunk.css.map": "/nil_arm/static/css/main.d9b97707.chunk.css.map",
-    "nil_arm/static/js/2.00a59def.chunk.js.LICENSE.txt": "/nil_arm/static/js/2.00a59def.chunk.js.LICENSE.txt",
-    "nil_arm/static/media/chapter0000.9872c657.png": "/nil_arm/static/media/chapter0000.9872c657.png",
-    "nil_arm/static/media/chapter0001-1.f58008ff.png": "/nil_arm/static/media/chapter0001-1.f58008ff.png",
-    "nil_arm/static/media/chapter0001-2.2605902b.png": "/nil_arm/static/media/chapter0001-2.2605902b.png",
-    "nil_arm/static/media/chapter0002-1.802a37cf.png": "/nil_arm/static/media/chapter0002-1.802a37cf.png",
-    "nil_arm/static/media/chapter0002-2.df867398.png": "/nil_arm/static/media/chapter0002-2.df867398.png",
-    "nil_arm/static/media/chapter002.3c6688ef.png": "/nil_arm/static/media/chapter002.3c6688ef.png",
-    "nil_arm/static/media/chapter003-1.687400a5.png": "/nil_arm/static/media/chapter003-1.687400a5.png",
-    "nil_arm/static/media/chapter003-2.bebadb01.png": "/nil_arm/static/media/chapter003-2.bebadb01.png",
-    "nil_arm/static/media/chapter0030.06682338.png": "/nil_arm/static/media/chapter0030.06682338.png",
-    "nil_arm/static/media/chapter0031.7a8d1fb7.png": "/nil_arm/static/media/chapter0031.7a8d1fb7.png",
-    "nil_arm/static/media/chapter0032.442c0816.png": "/nil_arm/static/media/chapter0032.442c0816.png",
-    "nil_arm/static/media/chapter0040.2c284f5f.png": "/nil_arm/static/media/chapter0040.2c284f5f.png",
-    "nil_arm/static/media/chapter0041.c3c26178.png": "/nil_arm/static/media/chapter0041.c3c26178.png",
-    "nil_arm/static/media/chapter0042.c3a65350.png": "/nil_arm/static/media/chapter0042.c3a65350.png"
+    "static/css/2.9dc46549.chunk.css.map": "/flight/static/css/2.9dc46549.chunk.css.map",
+    "static/js/2.43792a04.chunk.js.LICENSE.txt": "/flight/static/js/2.43792a04.chunk.js.LICENSE.txt",
+    "static/media/grui.css": "/flight/static/media/ExtJS.c0cbc904.ttf"
   },
   "entrypoints": [
-    "nil_arm/static/js/runtime-main.a577f45f.js",
-    "nil_arm/static/js/2.00a59def.chunk.js",
-    "nil_arm/static/css/main.d9b97707.chunk.css",
-    "nil_arm/static/js/main.d42dd313.chunk.js"
+    "static/js/runtime-main.1c5c934c.js",
+    "static/css/2.9dc46549.chunk.css",
+    "static/js/2.43792a04.chunk.js",
+    "static/js/main.091dfc46.chunk.js"
   ]
 }

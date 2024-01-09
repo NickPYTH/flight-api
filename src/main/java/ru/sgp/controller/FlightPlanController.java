@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.sgp.dto.FlightPlanDTO;
 import ru.sgp.service.FlightPlanService;
 
+import java.text.ParseException;
 import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -31,7 +32,7 @@ public class FlightPlanController {
     }
 
     @PostMapping(path = "/create")
-    public ResponseEntity<FlightPlanDTO> create(@RequestBody FlightPlanDTO flightFilialDTO) {
+    public ResponseEntity<FlightPlanDTO> create(@RequestBody FlightPlanDTO flightFilialDTO) throws ParseException {
         return flightPlanService.create(flightFilialDTO);
     }
 

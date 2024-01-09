@@ -8,6 +8,7 @@ import ru.sgp.dto.FlightFilialDTO;
 import ru.sgp.model.Employee;
 import ru.sgp.service.FlightFilialService;
 
+import java.text.ParseException;
 import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -28,12 +29,12 @@ public class FlightFilialController {
     }
 
     @PatchMapping(path = "/update")
-    public ResponseEntity<FlightFilialDTO> update(@RequestBody FlightFilialDTO flightFilialDTO) {
+    public ResponseEntity<FlightFilialDTO> update(@RequestBody FlightFilialDTO flightFilialDTO) throws ParseException {
         return flightFilialService.update(flightFilialDTO);
     }
 
     @PostMapping(path = "/create")
-    public ResponseEntity<FlightFilialDTO> create(@RequestBody FlightFilialDTO flightFilialDTO) {
+    public ResponseEntity<FlightFilialDTO> create(@RequestBody FlightFilialDTO flightFilialDTO) throws ParseException {
         return flightFilialService.create(flightFilialDTO);
     }
 }

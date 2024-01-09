@@ -10,6 +10,8 @@ import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
 import javax.transaction.Transactional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,12 +46,14 @@ public class FlightFilialService {
     }
 
     @Transactional
-    public ResponseEntity<FlightFilialDTO> update(FlightFilialDTO flightFilialDTO) {  // to do Responsible Employee
+    public ResponseEntity<FlightFilialDTO> update(FlightFilialDTO flightFilialDTO) throws ParseException {  // to do Responsible Employee
         ModelMapper mapper = new ModelMapper();
         Optional<FlightFilial> flightFilialOptional = flightFilialRepository.findById(flightFilialDTO.getId());
         FlightFilialDTO response = new FlightFilialDTO();
         if (flightFilialOptional.isPresent()) {
             FlightFilial flightFilial = mapper.map(flightFilialDTO, FlightFilial.class);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            flightFilial.setFlyDate(formatter.parse(flightFilialDTO.getFlyDate()));
             flightFilialRepository.save(flightFilial);
             WorkType workType = workTypeRepository.getById(flightFilialDTO.getIdWorkType());
             RouteFilial routeFilial = routeFilialRepository.getById(flightFilialDTO.getIdRoute());
@@ -61,13 +65,15 @@ public class FlightFilialService {
     }
 
     @Transactional
-    public ResponseEntity<FlightFilialDTO> create(FlightFilialDTO flightFilialDTO) {
+    public ResponseEntity<FlightFilialDTO> create(FlightFilialDTO flightFilialDTO) throws ParseException {
         RequestFilial request = requestFilialRepository.getById(flightFilialDTO.getIdRequestFilial());
         List<RouteFilial> routes = routeFilialRepository.findAllByIdRequest(request);
         ModelMapper mapper = new ModelMapper();
         FlightFilial flightFilial = new FlightFilial();
         FlightFilialDTO response = new FlightFilialDTO();
         flightFilial = mapper.map(flightFilialDTO, FlightFilial.class);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        flightFilial.setFlyDate(formatter.parse(flightFilialDTO.getFlyDate()));
         flightFilialRepository.save(flightFilial);
         WorkType workType = workTypeRepository.getById(flightFilialDTO.getIdWorkType());
         EmployeeResponsible employeeResponsible = employeeResponsibleRepository.getById(flightFilialDTO.getIdEmpResp());

@@ -40,6 +40,11 @@
         </multipart-config>
     </servlet>
 
+    <error-page>
+        <error-code>404</error-code>
+        <location>/index.html</location>
+    </error-page>
+
     <servlet-mapping>
         <servlet-name>REST</servlet-name>
         <url-pattern>/api/*</url-pattern>
